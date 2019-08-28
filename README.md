@@ -8,7 +8,5 @@ knowledge in python programming.
 
 ## What inside
  
-Implementation of the exact picture below
-
-![](icons/BankImage.jpg)
+![](icons/BankImage.png)
 
