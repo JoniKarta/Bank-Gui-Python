@@ -8,36 +8,22 @@ from tkinter import messagebox
 class Application(object):
     def __init__(self, master, bank_comapany, file_name):
         self.bankCompany = bank_comapany
+        self.top = self.bottom = self.bottom_right = self.bottom_left = self.bottom_lower = None
         self.current_customer = None
         self.list_index = 0
         self.file_name = file_name
         self.master = master
-        self.master.geometry("600x400+350+200")
+        self.master.geometry('700x400+350+300')
         self.master.title("Jon's bank")
-        self.master.resizable(False, False)
+        self.master.resizable(True, True)
 
         # Hold the top main frame and the bottom main frame
-        self.top = Frame(self.master, height=50, width=400, bg="white", relief=SUNKEN, borderwidth=2)
-        self.bottom = Frame(self.master, height=550, width=400, relief=SUNKEN, borderwidth=2)
-        self.bottom_right = Frame(self.bottom, height=300, width=300, relief=SUNKEN, borderwidth=2)
-        self.bottom_left = Frame(self.bottom, height=300, width=300, relief=SUNKEN, borderwidth=2)
-        self.bottom_lower = Frame(self.bottom, height=50, width=600, relief=SUNKEN, borderwidth=2)
-        self.top.pack(side=TOP, fill=X)
-        self.bottom.pack(side=BOTTOM, fill=X)
-        self.bottom_lower.pack(side=BOTTOM, fill=X)
-        self.bottom_left.pack(side=LEFT)
-        self.bottom_right.pack(side=RIGHT)
+        self.create_main_frame()
 
         # Bank icon
         self.bank_icon = PhotoImage(file='icons/bank.png')
         self.bank_button = Label(self.top, image=self.bank_icon, compound=CENTER, bg="white")
         self.bank_button.pack()
-
-        # Bank header
-        self.header_time = Label(self.top, text="JON'S", bg="white", font="Times 24 bold italic")
-        self.header_time.place(x=150, y=20)
-        self.header_time = Label(self.top, text="BANK", bg="white", font="Times 24 bold italic")
-        self.header_time.place(x=345, y=20)
 
         # Withdraw icon and button
         self.withdraw_icon = PhotoImage(file='icons/withdraw.png')
@@ -66,52 +52,48 @@ class Application(object):
         self.listbox = Listbox(self.bottom_left_frame, width=40, height=50, bg="white", font="Helvetica 9 italic")
         self.scrollbar = Scrollbar(self.bottom_left_frame, command=self.listbox.yview)
         self.listbox.config(yscrollcommand=self.scrollbar.set)
-        self.scrollbar.pack(side=RIGHT, fill=Y)
-        self.listbox.pack(side=LEFT)
+        self.scrollbar.pack(side=RIGHT, fill=BOTH)
+        self.listbox.pack()
 
         # Frame of right pane
-        self.right_grid = Frame(self.bottom_right, height=300, width=300, bg="#9bc9ff")
-        self.right_grid.pack()
-        self.customer_info = LabelFrame(self.right_grid, text=" Customer information ", height=300, width=300,
+        self.customer_info = LabelFrame(self.bottom_right, text=" Customer information ", height=800,
                                         bg="#9bc9ff",
                                         font="Times 12 bold italic")
-        self.customer_info.pack()
+        self.customer_info.pack(fill=BOTH)
 
-        self.customer_name = Label(self.right_grid, text="Name :", bg="#9bc9ff", font="Times 12 bold italic")
+        self.customer_name = Label(self.bottom_right, text="Name :", bg="#9bc9ff", font="Times 12 bold italic")
         self.customer_name.place(x=10, y=30)
 
-        self.customer_name = Label(self.right_grid, text="Account :", bg="#9bc9ff", font="Times 12 bold italic")
+        self.customer_name = Label(self.bottom_right, text="Account :", bg="#9bc9ff", font="Times 12 bold italic")
         self.customer_name.place(x=10, y=70)
 
-        self.customer_name = Label(self.right_grid, text="Balance :", bg="#9bc9ff", font="Times 12 bold italic")
+        self.customer_name = Label(self.bottom_right, text="Balance :", bg="#9bc9ff", font="Times 12 bold italic")
         self.customer_name.place(x=10, y=110)
 
-        self.customer_name = Label(self.right_grid, text="Credit :", bg="#9bc9ff", font="Times 12 bold italic")
+        self.customer_name = Label(self.bottom_right, text="Credit :", bg="#9bc9ff", font="Times 12 bold italic")
         self.customer_name.place(x=10, y=150)
 
         self.str_name = StringVar()
-        self.extract_name = Label(self.right_grid, font="Times 12 italic", bg="#9bc9ff", textvariable=self.str_name)
+        self.extract_name = Label(self.bottom_right, font="Times 12 italic", bg="#9bc9ff", textvariable=self.str_name)
         self.extract_name.place(x=100, y=30)
 
         self.str_account = StringVar()
-        self.extract_account = Label(self.right_grid, font="Times 12 italic", bg="#9bc9ff",
+        self.extract_account = Label(self.bottom_right, font="Times 12 italic", bg="#9bc9ff",
                                      textvariable=self.str_account)
         self.extract_account.place(x=100, y=70)
 
         self.str_balance = StringVar()
-        self.extract_balance = Label(self.right_grid, font="Times 12 italic", bg="#9bc9ff",
+        self.extract_balance = Label(self.bottom_right, font="Times 12 italic", bg="#9bc9ff",
                                      textvariable=self.str_balance)
         self.extract_balance.place(x=100, y=110)
 
         self.str_credit = StringVar()
-        self.extract_credit = Label(self.right_grid, font="Times 12  italic", bg="#9bc9ff",
+        self.extract_credit = Label(self.bottom_right, font="Times 12  italic", bg="#9bc9ff",
                                     textvariable=self.str_credit)
         self.extract_credit.place(x=100, y=150)
 
         # Transfer money pane
-        self.entry_amount = None
-        self.account_number = None
-        self.box = None
+        self.entry_amount = self.account_number = self.box = None
 
         # Functionality
         self.read_customer_from_file()
@@ -119,6 +101,18 @@ class Application(object):
         self.listbox.bind('<<ListboxSelect>>', self.update_customer)
         self.listbox.select_set(0)  # This only sets focus on the first item.
         self.update_customer(self)
+
+    def create_main_frame(self):
+        self.top = Frame(self.master, bg="white", relief=SUNKEN, borderwidth=2)
+        self.bottom = Frame(self.master, relief=SUNKEN, borderwidth=2)
+        self.bottom_right = Frame(self.bottom, height=800, relief=SUNKEN, borderwidth=2)
+        self.bottom_left = Frame(self.bottom, relief=SUNKEN, borderwidth=2)
+        self.bottom_lower = Frame(self.bottom, relief=SUNKEN, borderwidth=2)
+        self.top.pack(side=TOP, fill=BOTH)
+        self.bottom.pack(side=BOTTOM, fill=BOTH)
+        self.bottom_lower.pack(side=BOTTOM, fill=BOTH)
+        self.bottom_left.pack(side=LEFT)
+        self.bottom_right.pack(fill=BOTH)
 
     def withdraw(self):
         if self.entry.get().isdigit():
