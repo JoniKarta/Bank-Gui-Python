@@ -10,4 +10,4 @@ knowledge in python programming.
  
  Implementation of the exact picture below
 
-![](BankImage.jpg)
+![](icons/BankImage.jpg)
